@@ -1,0 +1,18 @@
+# macOS
+.DS_Store
+
+# IntelliJ IDEA
+.idea/
+*.iml
+out/
+
+# Compiled class files
+*.class
+
+# Logs
+*.log
+
+# Build folders
+build/
+target/
+bin/
