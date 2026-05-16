@@ -1,0 +1,29 @@
+[
+  {
+    "symbol": "AAPL",
+    "open": 180.50,
+    "high": 183.50,
+    "low": 179.20,
+    "close": 182.50,
+    "volume": 12500,
+    "timestamp": "2025-04-23T00:00:00Z"
+  },
+  {
+    "symbol": "AAPL",
+    "open": 183.00,
+    "high": 185.80,
+    "low": 181.40,
+    "close": 184.90,
+    "volume": 9800,
+    "timestamp": "2025-04-24T00:00:00Z"
+  },
+  {
+    "symbol": "AAPL",
+    "open": 185.20,
+    "high": 187.00,
+    "low": 184.10,
+    "close": 186.30,
+    "volume": 11200,
+    "timestamp": "2025-04-25T00:00:00Z"
+  }
+]
