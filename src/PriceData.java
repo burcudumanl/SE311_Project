@@ -1,5 +1,7 @@
 import java.time.Instant;
 
+// ===== Domain Model: PriceData =====
+// Immutable price record shared across the data layer.
 public class PriceData {
     private String symbol;
     private Instant timestamp;
@@ -8,7 +10,6 @@ public class PriceData {
     private double low;
     private double close;
     private long volume;
-
     public PriceData(String symbol, Instant timestamp, double open, double high,
                      double low, double close, long volume) {
         this.symbol = symbol;
@@ -19,7 +20,6 @@ public class PriceData {
         this.close = close;
         this.volume = volume;
     }
-
     public String getSymbol() { return symbol; }
     public Instant getTimestamp() { return timestamp; }
     public double getOpen() { return open; }
@@ -27,7 +27,6 @@ public class PriceData {
     public double getLow() { return low; }
     public double getClose() { return close; }
     public long getVolume() { return volume; }
-
     @Override
     public String toString() {
         return symbol + " | " + timestamp + " | open=" + open + " close=" + close + " volume=" + volume;
