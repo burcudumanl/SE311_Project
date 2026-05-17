@@ -8,7 +8,31 @@ public class RiskCalculator {
         MEDIUM, 
         HIGH
     }
+public double calculateLossPercent(double entryPrice,
+                                       double currentPrice) {
 
+        if (entryPrice <= 0) {
+            throw new IllegalArgumentException(
+                    "Entry price must be greater than zero."
+            );
+        }
+
+        if (currentPrice < 0) {
+            throw new IllegalArgumentException(
+                    "Current price cannot be negative."
+            );
+        }
+
+        double lossPercent =
+                ((entryPrice - currentPrice) / entryPrice) * 100;
+
+
+        if (lossPercent < 0) {
+            return 0;
+        }
+
+        return lossPercent;
+    }
     public RiskLevel calculateRiskLevel(double entryPrice, double currentPrice, double maxLossPercent) {
         if (entryPrice <= 0) {
             return RiskLevel.HIGH;
@@ -25,29 +49,16 @@ public class RiskCalculator {
         }
     }
 
-    public double calculateVolatility(List<PriceData> data) {
-        if (data == null || data.isEmpty()) {
-            return 0;
-        }
+      public boolean shouldForceClose(double entryPrice,
+                                    double currentPrice,
+                                    double maxLossThreshold) {
 
-        double totalRange = 0;
-
-        for (PriceData price : data) {
-            totalRange += price.getHigh() - price.getLow();
-        }
-
-        return totalRange / data.size();
+        return calculateRiskLevel(
+                entryPrice,
+                currentPrice,
+                maxLossThreshold
+        ) == RiskLevel.HIGH;
     }
 
-    public double calculatePositionSize(double accountBalance, double riskPercent,
-                                        double entryPrice, double stopLossPrice) {
-        double moneyAtRisk = accountBalance * (riskPercent / 100);
-        double riskPerUnit = Math.abs(entryPrice - stopLossPrice);
-
-        if (riskPerUnit == 0) {
-            return 0;
-        }
-
-        return moneyAtRisk / riskPerUnit;
-    }
+  
 }
