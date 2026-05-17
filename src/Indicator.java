@@ -40,3 +40,15 @@ class SMA extends Indicator {
         return "SMA(" + period + ")";
     }
 }
+class EMA extends Indicator {
+
+    public EMA(int period) {
+        super(period);
+    }
+
+
+    @Override
+    public String getName() {
+        return "EMA(" + period + ")";
+    }}
+    
