@@ -22,13 +22,13 @@ class SMA extends Indicator {
 
     @Override
     public double calculate(List<PriceData> data) {
-        if (prices == null) {
+        if (data == null) {
             throw new IllegalArgumentException(
                     "Price list cannot be null."
             );
         }
 
-        if (prices.size() < period) {
+        if (data.size() < period) {
             throw new IllegalArgumentException(
                     "Not enough price data for the selected period."
             );
@@ -46,5 +46,27 @@ class SMA extends Indicator {
     @Override
     public String getName() {
         return "SMA(" + period + ")";
+    }
+}
+
+class ATR extends Indicator {
+
+    public ATR(int period) {
+        super(period);
+    }
+
+    @Override
+    public double calculate(List<PriceData> data) {
+        if (data == null || data.size() < period)
+            throw new IllegalArgumentException("Not enough data for ATR.");
+        double sum = 0;
+        for (int i = data.size() - period; i < data.size(); i++)
+            sum += (data.get(i).getHigh() - data.get(i).getLow());
+        return sum / period;
+    }
+
+    @Override
+    public String getName() {
+        return "ATR(" + period + ")";
     }
 }
