@@ -22,6 +22,11 @@ public class DataLayerDemo {
                 publisher
         );
         System.out.println("----------------------------------------");
+        totalRecords += runSource(
+                new DataSource.Tabular("data/ETH-USD.csv", "ETH-USD"),
+                publisher
+        );
+        System.out.println("----------------------------------------");
         System.out.println("[Summary]");
         System.out.println("  Records published: " + totalRecords);
         System.out.println("  Observer calls:    " + totalRecords * publisher.getObserverCount());

@@ -49,12 +49,19 @@ public interface DataSource {
                 return null;
             }
             try {
-                LocalDate date = LocalDate.parse(parts[0]);
+                String dateStr = parts[0].split("[ T]")[0];
+                LocalDate date = LocalDate.parse(dateStr);
                 double open  = Double.parseDouble(parts[1]);
                 double high  = Double.parseDouble(parts[2]);
                 double low   = Double.parseDouble(parts[3]);
                 double close = Double.parseDouble(parts[4]);
-                long volume  = Long.parseLong(parts[parts.length - 1]);
+                long volume = 0;
+                for (int i = parts.length - 1; i >= 0; i--) {
+                    try {
+                        volume = Long.parseLong(parts[i]);
+                        break;
+                    } catch (NumberFormatException ignored) {}
+                }
                 return new PriceData(
                         symbol,
                         date.atStartOfDay().toInstant(ZoneOffset.UTC),
