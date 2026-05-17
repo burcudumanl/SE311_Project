@@ -4,7 +4,9 @@ import java.util.List;
 public class RiskCalculator {
 
     public enum RiskLevel {
-        LOW, MEDIUM, HIGH
+        LOW, 
+        MEDIUM, 
+        HIGH
     }
 
     public RiskLevel calculateRiskLevel(double entryPrice, double currentPrice, double maxLossPercent) {
@@ -12,11 +14,11 @@ public class RiskCalculator {
             return RiskLevel.HIGH;
         }
 
-        double lossPercent = ((entryPrice - currentPrice) / entryPrice) * 100;
+        double loss = ((entryPrice - currentPrice) / entryPrice) * 100;
 
-        if (lossPercent >= maxLossPercent) {
+        if (loss >= maxLossPercent) {
             return RiskLevel.HIGH;
-        } else if (lossPercent >= maxLossPercent / 2) {
+        } else if (loss >= maxLossPercent / 2) {
             return RiskLevel.MEDIUM;
         } else {
             return RiskLevel.LOW;
