@@ -40,31 +40,3 @@ class SMA extends Indicator {
         return "SMA(" + period + ")";
     }
 }
-class EMA extends Indicator {
-
-    public EMA(int period) {
-        super(period);
-    }
-@Override
-    public double calculate(List<PriceData> data) {
-        if (data == null || data.size() < period || period <= 0) {
-            return 0;
-        }
-
-        double multiplier = 2.0 / (period + 1);
-
-        double ema = data.get(data.size() - period).getClose();
-
-        for (int i = data.size() - period + 1; i < data.size(); i++) {
-            double close = data.get(i).getClose();
-            ema = (close - ema) * multiplier + ema;
-        }
-
-        return ema;
-    }
-
-    @Override
-    public String getName() {
-        return "EMA(" + period + ")";
-    }}
-    
