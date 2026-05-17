@@ -22,8 +22,16 @@ class SMA extends Indicator {
 
     @Override
     public double calculate(List<PriceData> data) {
-        if (data == null || data.size() < period || period <= 0) {
-            return 0;
+        if (prices == null) {
+            throw new IllegalArgumentException(
+                    "Price list cannot be null."
+            );
+        }
+
+        if (prices.size() < period) {
+            throw new IllegalArgumentException(
+                    "Not enough price data for the selected period."
+            );
         }
 
         double sum = 0;
