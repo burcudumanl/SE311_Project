@@ -1,3 +1,9 @@
+// BURCU DUMANLI
+// ECE KABASAKAL
+// BEYZA BARAK
+// ENES YAVUZ
+// Algorithmic Trading System
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -11,9 +17,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-// ===== Adapter Pattern =====
+// Adapter Pattern
 // Common interface for every data format. Each nested class adapts a raw
-// source (CSV, JSON, ...) into a unified List<PriceData>.
+// source (CSV, JSON, ...) into a unified List<PriceData>, so the rest of
+// the system does not need to change when a new format is added.
 public interface DataSource {
     List<PriceData> fetch();
     String getName();

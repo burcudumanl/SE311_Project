@@ -1,73 +1,74 @@
-// Abstract Factory: defines a contract for creating a family of related objects
-// (SMA indicator, ATR indicator, RiskCalculator) without specifying their concrete classes.
-// Each concrete subclass represents one data-source "variant" of the factory.
-// Factory Method pattern is applied inside each abstract method (createSMA, createATR,
-// createRiskCalculator): subclasses decide which concrete object to instantiate,
-// keeping object creation decoupled from the code that uses the objects.
+// BURCU DUMANLI
+// ECE KABASAKAL
+// BEYZA BARAK
+// ENES YAVUZ
+// Algorithmic Trading System
+
+// Abstract Factory Pattern:
+//   Declares the contract for creating a family of related products
+//   (SMA indicator, ATR indicator, RiskCalculator) without binding the
+//   caller to any concrete data-source class.
+//
+// Factory Method Pattern:
+//   Each create* method is a factory method that subclasses override to
+//   decide which concrete object to instantiate. The static getFactory()
+//   below is also a factory method, choosing which concrete factory to
+//   return based on a runtime source name.
 public abstract class IndicatorFactory {
 
-    // Factory Method: subclasses override this to produce a source-specific SMA indicator.
-    public abstract Indicator createSMA(int period);
-
-    // Factory Method: subclasses override this to produce a source-specific ATR indicator.
-    public abstract Indicator createATR(int period);
-
-    // Factory Method: subclasses override this to produce a source-specific RiskCalculator.
+    public abstract Indicator      createSMA(int period);
+    public abstract Indicator      createATR(int period);
     public abstract RiskCalculator createRiskCalculator();
 
-    // Static factory selector (Factory Method at the top level):
-    // maps a data-source name to the correct concrete factory, so callers never
-    // need to know which factory class to instantiate directly.
+    // Returns the concrete factory matching the configured data source.
     public static IndicatorFactory getFactory(String source) {
         switch (source) {
             case "Binance": return new BinanceIndicatorFactory();
             case "Yahoo":   return new YahooIndicatorFactory();
-            default: throw new IllegalArgumentException("Unknown source: " + source);
+            default:
+                throw new IllegalArgumentException("Unknown source: " + source);
         }
     }
 
-    // Concrete factory for Binance data: creates indicators and risk tools
-    // tagged and configured for the Binance data source.
+    // Concrete factory for Binance feeds. Indicators are tagged "Binance"
+    // and the RiskCalculator uses a tighter multiplier because crypto feeds
+    // are typically more volatile than equity feeds.
     static class BinanceIndicatorFactory extends IndicatorFactory {
+
+        private static final String  TAG        = "Binance";
+        private static final double  RISK_SCALE = 0.8;
+
         @Override
-        // Creates an SMA indicator sourced from Binance price data.
         public Indicator createSMA(int period) {
-            System.out.println("[BinanceFactory] Creating SMA(" + period + ")");
-            return new SMA(period);
+            return new SMA(period, TAG);
         }
         @Override
-        // Creates an ATR indicator sourced from Binance price data.
         public Indicator createATR(int period) {
-            System.out.println("[BinanceFactory] Creating ATR(" + period + ")");
-            return new ATR(period);
+            return new ATR(period, TAG);
         }
         @Override
-        // Creates a RiskCalculator configured for Binance workflows.
         public RiskCalculator createRiskCalculator() {
-            System.out.println("[BinanceFactory] Creating RiskCalculator");
-            return new RiskCalculator();
+            return new RiskCalculator(RISK_SCALE);
         }
     }
 
-    // Concrete factory for Yahoo Finance data: same product family as Binance
-    // but tagged for Yahoo, allowing future source-specific customization.
+    // Concrete factory for Yahoo Finance feeds. Indicators are tagged
+    // "Yahoo" and the RiskCalculator uses the default (more conservative)
+    // multiplier appropriate for delayed equity data.
     static class YahooIndicatorFactory extends IndicatorFactory {
+
+        private static final String TAG = "Yahoo";
+
         @Override
-        // Creates an SMA indicator sourced from Yahoo Finance price data.
         public Indicator createSMA(int period) {
-            System.out.println("[YahooFactory] Creating SMA(" + period + ")");
-            return new SMA(period);
+            return new SMA(period, TAG);
         }
         @Override
-        // Creates an ATR indicator sourced from Yahoo Finance price data.
         public Indicator createATR(int period) {
-            System.out.println("[YahooFactory] Creating ATR(" + period + ")");
-            return new ATR(period);
+            return new ATR(period, TAG);
         }
         @Override
-        // Creates a RiskCalculator configured for Yahoo Finance workflows.
         public RiskCalculator createRiskCalculator() {
-            System.out.println("[YahooFactory] Creating RiskCalculator");
             return new RiskCalculator();
         }
     }
