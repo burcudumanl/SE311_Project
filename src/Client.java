@@ -210,12 +210,13 @@ class TradingFacade {
         System.out.println();
     }
 
-    // Step 1: Fetch data via the Adapter.
+    // Step 1: Fetch data via the Adapter. The concrete adapter is picked
+    // from the file extension: .json -> DataSource.Json, otherwise Tabular.
     private void loadData() {
-        DataSource source = new DataSource.Tabular(
-                config.getCsvFilePath(),
-                config.getSymbol()
-        );
+        String path = config.getCsvFilePath();
+        DataSource source = path.endsWith(".json")
+                ? new DataSource.Json(path)
+                : new DataSource.Tabular(path, config.getSymbol());
         priceHistory = source.fetch();
 
         System.out.println("[STEP 1] FETCH DATA");

@@ -18,5 +18,15 @@
     "entryPrice": 2000.00,
     "maxPositionLoss": 10.0,
     "tradeQuantity": 5
+  },
+  {
+    "exchangeName": "Binance",
+    "strategyName": "SHORT_TERM",
+    "csvFilePath": "data/eth_feed.json",
+    "symbol": "ETH-USD",
+    "smaPeriod": 20,
+    "entryPrice": 2500.00,
+    "maxPositionLoss": 5.0,
+    "tradeQuantity": 2
   }
 ]

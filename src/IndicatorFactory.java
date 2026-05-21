@@ -4,23 +4,111 @@
 // ENES YAVUZ
 // Algorithmic Trading System
 
-// Abstract Factory Pattern:
-//   Declares the contract for creating a family of related products
-//   (SMA indicator, ATR indicator, RiskCalculator) without binding the
-//   caller to any concrete data-source class.
-//
-// Factory Method Pattern:
-//   Each create* method is a factory method that subclasses override to
-//   decide which concrete object to instantiate. The static getFactory()
-//   below is also a factory method, choosing which concrete factory to
-//   return based on a runtime source name.
+import java.util.List;
+
+// Base type for every technical-analysis indicator.
+// A source tag (e.g. "Binance", "Yahoo") lets each concrete factory stamp
+// its indicators so the same SMA(200) coming from different sources is
+// distinguishable in logs and dashboards.
+abstract class Indicator {
+
+    protected final int    period;
+    protected final String sourceTag;
+
+    protected Indicator(int period, String sourceTag) {
+        this.period    = period;
+        this.sourceTag = sourceTag == null ? "" : sourceTag;
+    }
+
+    public abstract double calculate(List<PriceData> data);
+
+    public abstract String getName();
+
+    protected String tagPrefix() {
+        return sourceTag.isEmpty() ? "" : sourceTag + "-";
+    }
+}
+
+// Simple Moving Average: average of the last `period` close prices.
+class SMA extends Indicator {
+
+    public SMA(int period, String sourceTag) {
+        super(period, sourceTag);
+    }
+
+    @Override
+    public double calculate(List<PriceData> data) {
+        if (data == null) {
+            throw new IllegalArgumentException("Price list cannot be null.");
+        }
+        if (data.size() < period) {
+            throw new IllegalArgumentException(
+                    "Not enough price data for the selected period.");
+        }
+
+        double sum = 0;
+        for (int i = data.size() - period; i < data.size(); i++) {
+            sum += data.get(i).getClose();
+        }
+        return sum / period;
+    }
+
+    @Override
+    public String getName() {
+        return tagPrefix() + "SMA(" + period + ")";
+    }
+}
+
+// Average True Range — a volatility measure.
+// True Range = max(high - low, |high - prevClose|, |low - prevClose|).
+class ATR extends Indicator {
+
+    public ATR(int period, String sourceTag) {
+        super(period, sourceTag);
+    }
+
+    @Override
+    public double calculate(List<PriceData> data) {
+        if (data == null || data.size() < period + 1) {
+            throw new IllegalArgumentException(
+                    "Not enough data for ATR (need period + 1 rows).");
+        }
+
+        double sum = 0;
+        int start = data.size() - period;
+        for (int i = start; i < data.size(); i++) {
+            PriceData curr = data.get(i);
+            PriceData prev = data.get(i - 1);
+            double tr = Math.max(
+                    curr.getHigh() - curr.getLow(),
+                    Math.max(
+                            Math.abs(curr.getHigh() - prev.getClose()),
+                            Math.abs(curr.getLow()  - prev.getClose())
+                    )
+            );
+            sum += tr;
+        }
+        return sum / period;
+    }
+
+    @Override
+    public String getName() {
+        return tagPrefix() + "ATR(" + period + ")";
+    }
+}
+
+// Abstract Factory Pattern + Factory Method Pattern.
+// Abstract Factory: contract for creating a family of related products
+// (SMA, ATR, RiskCalculator) without binding the caller to any concrete
+// data source. Factory Method: each create* is overridden by subclasses
+// to choose the concrete object; getFactory() also picks a concrete
+// factory based on a runtime source name.
 public abstract class IndicatorFactory {
 
     public abstract Indicator      createSMA(int period);
     public abstract Indicator      createATR(int period);
     public abstract RiskCalculator createRiskCalculator();
 
-    // Returns the concrete factory matching the configured data source.
     public static IndicatorFactory getFactory(String source) {
         switch (source) {
             case "Binance": return new BinanceIndicatorFactory();
@@ -30,13 +118,12 @@ public abstract class IndicatorFactory {
         }
     }
 
-    // Concrete factory for Binance feeds. Indicators are tagged "Binance"
-    // and the RiskCalculator uses a tighter multiplier because crypto feeds
-    // are typically more volatile than equity feeds.
+    // Binance: indicators tagged "Binance"; RiskCalculator uses a tighter
+    // multiplier because crypto feeds are more volatile than equity feeds.
     static class BinanceIndicatorFactory extends IndicatorFactory {
 
-        private static final String  TAG        = "Binance";
-        private static final double  RISK_SCALE = 0.8;
+        private static final String TAG        = "Binance";
+        private static final double RISK_SCALE = 0.8;
 
         @Override
         public Indicator createSMA(int period) {
@@ -52,9 +139,8 @@ public abstract class IndicatorFactory {
         }
     }
 
-    // Concrete factory for Yahoo Finance feeds. Indicators are tagged
-    // "Yahoo" and the RiskCalculator uses the default (more conservative)
-    // multiplier appropriate for delayed equity data.
+    // Yahoo: indicators tagged "Yahoo"; RiskCalculator uses the default
+    // (more conservative) multiplier for delayed equity data.
     static class YahooIndicatorFactory extends IndicatorFactory {
 
         private static final String TAG = "Yahoo";
