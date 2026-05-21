@@ -1,0 +1,22 @@
+[
+  {
+    "exchangeName": "Yahoo",
+    "strategyName": "LONG_TERM",
+    "csvFilePath": "data/BTC-USD.csv",
+    "symbol": "BTC-USD",
+    "smaPeriod": 200,
+    "entryPrice": 110000.00,
+    "maxPositionLoss": 4.0,
+    "tradeQuantity": 1
+  },
+  {
+    "exchangeName": "Binance",
+    "strategyName": "SHORT_TERM",
+    "csvFilePath": "data/ETH-USD.csv",
+    "symbol": "ETH-USD",
+    "smaPeriod": 50,
+    "entryPrice": 2000.00,
+    "maxPositionLoss": 10.0,
+    "tradeQuantity": 5
+  }
+]
